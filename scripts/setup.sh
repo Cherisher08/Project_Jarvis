@@ -6,6 +6,7 @@
 #   1. Cockpit (Web-based server administration)
 #   2. Docker Engine & Docker Compose plugin (Native Linux container runtime)
 #   3. Tailscale VPN (Secure zero-configuration remote access)
+#   4. Disables systemd-resolved (frees port 53 for Pi-hole DNS container)
 # And sets up the base directories under /opt/homelab with correct permissions.
 # ==============================================================================
 
@@ -80,15 +81,33 @@ if [ "$ACTUAL_USER" != "root" ]; then
   echo "[+] User '$ACTUAL_USER' added to docker group."
 fi
 
-# 4. Install Tailscale VPN
+# 4. Disable systemd-resolved (frees up port 53 for Pi-hole DNS container)
+# Ubuntu Server 22.04 runs systemd-resolved which binds to port 53 by default.
+# Pi-hole requires exclusive ownership of port 53 to serve DNS to the network.
+echo "[*] Disabling systemd-resolved to free port 53 for Pi-hole..."
+systemctl stop systemd-resolved
+systemctl disable systemd-resolved
+
+# Replace /etc/resolv.conf with a static DNS configuration
+# (During setup, use Google DNS temporarily — Pi-hole will take over after deploy)
+rm -f /etc/resolv.conf
+cat > /etc/resolv.conf << 'EOF'
+# Temporary DNS for setup — will be replaced by Pi-hole after deployment
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+EOF
+chattr +i /etc/resolv.conf   # Prevent NetworkManager from overwriting it
+echo "[+] systemd-resolved disabled. Port 53 is now free for Pi-hole."
+
+# 5. Install Tailscale VPN
 echo "[*] Installing Tailscale VPN..."
 curl -fsSL https://tailscale.com/install.sh | sh
 echo "[+] Tailscale installed successfully."
 
-# 5. Create Homelab Folder Structure
+# 6. Create Homelab Folder Structure
 echo "[*] Creating folder structure under /opt/homelab..."
 
-# Base directories
+# Base data directories
 mkdir -p /opt/homelab/config/compose
 mkdir -p /opt/homelab/photos
 mkdir -p /opt/homelab/recordings
@@ -98,10 +117,16 @@ mkdir -p /opt/homelab/homeassistant
 mkdir -p /opt/homelab/backups
 mkdir -p /opt/homelab/pihole
 
-# Specific configurations folders
+# Phase 1 — Foundation service config dirs
 mkdir -p /opt/homelab/config/portainer_data
 mkdir -p /opt/homelab/config/nginx_proxy_manager/data
 mkdir -p /opt/homelab/config/nginx_proxy_manager/letsencrypt
+
+# Phase 2 — Network service config dirs
+mkdir -p /opt/homelab/config/pihole/etc-pihole
+mkdir -p /opt/homelab/config/pihole/etc-dnsmasq.d
+mkdir -p /opt/homelab/config/unbound
+mkdir -p /opt/homelab/config/ntfy
 
 # Permissions
 USER_UID=$(id -u "$ACTUAL_USER")
@@ -123,7 +148,10 @@ echo ""
 echo "3. Docker Permissions: Please LOG OUT and LOG BACK IN"
 echo "   (or run: newgrp docker) to run docker commands without sudo."
 echo ""
-echo "4. Ready for configuration files. Copy your Compose configs to:"
+echo "4. systemd-resolved is DISABLED. Port 53 is reserved for Pi-hole."
+echo "   DNS is temporarily pointed to 1.1.1.1 until Pi-hole is deployed."
+echo ""
+echo "5. Ready for configuration files. Copy your Compose configs to:"
 echo "   /opt/homelab/config/"
 echo ""
 echo "========================================================================"

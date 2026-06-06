@@ -1,0 +1,45 @@
+# ==============================================================================
+# HOME LAB SYSTEM - NTFY Server Configuration
+# Self-hosted push notification server for all family alerts
+# ==============================================================================
+
+# Base URL — used for generating notification links and attachment URLs
+# Replace SERVER_IP with your actual Mini PC local IP or Tailscale IP
+base-url: "http://notify.home"
+
+# Listen on all interfaces on port 80 (mapped to 2586 on the host)
+listen-http: ":80"
+
+# ---------------------------------------------------------------------------
+# Attachment Storage
+# ---------------------------------------------------------------------------
+# Attachments (e.g. Frigate camera snapshots) are stored locally
+attachment-cache-dir: "/var/lib/ntfy/attachments"
+attachment-total-size: "2G"
+attachment-file-size-limit: "25M"
+attachment-expiry-duration: "72h"
+
+# ---------------------------------------------------------------------------
+# Message Cache (SQLite)
+# ---------------------------------------------------------------------------
+# Messages are cached so the NTFY app can sync missed notifications on reconnect
+cache-file: "/var/lib/ntfy/cache.db"
+cache-duration: "72h"         # Keep notifications for 3 days
+
+# ---------------------------------------------------------------------------
+# Rate Limiting (Prevents abuse)
+# ---------------------------------------------------------------------------
+visitor-request-limit-burst: 60
+visitor-request-limit-replenish: "5s"
+visitor-subscription-limit: 30
+
+# ---------------------------------------------------------------------------
+# Access Control
+# ---------------------------------------------------------------------------
+# The server is private (on your Tailscale network) but we still set
+# auth-default-access to deny-all and create a single admin user for safety.
+# To create the admin user, run:
+#   docker exec -it hl_ntfy ntfy user add --role=admin admin
+# Then add regular family users:
+#   docker exec -it hl_ntfy ntfy user add family-member-name
+auth-default-access: "deny-all"

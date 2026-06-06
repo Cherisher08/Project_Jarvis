@@ -1,0 +1,26 @@
+# ==============================================================================
+# HOME LAB SYSTEM - .gitignore
+# ==============================================================================
+
+# Environment files — contain secrets, NEVER commit these
+.env
+*.env
+
+# SCP / file transfer artifacts (e.g. `scp file user@ip` run in wrong dir)
+*@*.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Backup files
+*.bak
+*.orig
