@@ -1,0 +1,98 @@
+# ==============================================================================
+# HOME LAB SYSTEM - Frigate NVR Configuration
+# ==============================================================================
+
+# MQTT Configuration (Used for Home Assistant integration in Phase 4)
+# Connected to the Mosquitto MQTT broker in the same homelab_net network
+mqtt:
+  host: hl_mosquitto
+  user: '{FRIGATE_MQTT_USER}'
+  password: '{FRIGATE_MQTT_PASSWORD}'
+
+# Define CPU detector explicitly to avoid errors regarding missing Coral TPU
+detectors:
+  cpu:
+    type: cpu
+
+# Enable Intel VAAPI Hardware Acceleration globally for Intel HD 4400/4600 GPU
+ffmpeg:
+  hwaccel_args: preset-vaapi
+
+# Global Defaults for Camera Streams
+detect:
+  enabled: false  # Disabled to save CPU & RAM (CPU-based object detection is heavy)
+
+motion:
+  enabled: true   # Enable motion detection for recording triggers
+
+record:
+  enabled: true
+  retain:
+    days: 7       # Keep continuous 24/7 recordings for 7 days
+    mode: all
+  events:
+    retain:
+      default: 30 # Keep motion-triggered event clips for 30 days
+      mode: motion
+
+# Camera Definitions (Analog cameras via single DVR at 192.168.1.2)
+cameras:
+  # ----------------------------------------------------------------------------
+  # Camera 1 (DVR Channel 1)
+  # ----------------------------------------------------------------------------
+  camera_1:
+    ffmpeg:
+      inputs:
+        # Main stream (HD) used for recording
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/101
+          roles:
+            - record
+        # Sub stream (SD) used for motion detection
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/102
+          roles:
+            - detect
+
+  # ----------------------------------------------------------------------------
+  # Camera 2 (DVR Channel 2)
+  # ----------------------------------------------------------------------------
+  camera_2:
+    ffmpeg:
+      inputs:
+        # Main stream (HD) used for recording
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/201
+          roles:
+            - record
+        # Sub stream (SD) used for motion detection
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/202
+          roles:
+            - detect
+
+  # ----------------------------------------------------------------------------
+  # Camera 3 (DVR Channel 3)
+  # ----------------------------------------------------------------------------
+  camera_3:
+    ffmpeg:
+      inputs:
+        # Main stream (HD) used for recording
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/301
+          roles:
+            - record
+        # Sub stream (SD) used for motion detection
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/302
+          roles:
+            - detect
+
+  # ----------------------------------------------------------------------------
+  # Camera 4 (DVR Channel 4)
+  # ----------------------------------------------------------------------------
+  camera_4:
+    ffmpeg:
+      inputs:
+        # Main stream (HD) used for recording
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/401
+          roles:
+            - record
+        # Sub stream (SD) used for motion detection
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/402
+          roles:
+            - detect

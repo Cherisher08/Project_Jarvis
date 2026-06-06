@@ -128,6 +128,10 @@ mkdir -p /opt/homelab/config/pihole/etc-dnsmasq.d
 mkdir -p /opt/homelab/config/unbound
 mkdir -p /opt/homelab/config/ntfy
 
+# Phase 3 — Camera service config dirs
+mkdir -p /opt/homelab/config/frigate
+
+
 # Permissions
 USER_UID=$(id -u "$ACTUAL_USER")
 USER_GID=$(id -g "$ACTUAL_USER")
