@@ -41,11 +41,11 @@ cameras:
     ffmpeg:
       inputs:
         # Main stream (HD) used for recording
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/101
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/101
           roles:
             - record
         # Sub stream (SD) used for motion detection
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/102
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/102
           roles:
             - detect
 
@@ -56,11 +56,11 @@ cameras:
     ffmpeg:
       inputs:
         # Main stream (HD) used for recording
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/201
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/201
           roles:
             - record
         # Sub stream (SD) used for motion detection
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/202
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/202
           roles:
             - detect
 
@@ -71,11 +71,11 @@ cameras:
     ffmpeg:
       inputs:
         # Main stream (HD) used for recording
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/301
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/301
           roles:
             - record
         # Sub stream (SD) used for motion detection
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/302
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/302
           roles:
             - detect
 
@@ -86,10 +86,10 @@ cameras:
     ffmpeg:
       inputs:
         # Main stream (HD) used for recording
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/401
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/401
           roles:
             - record
         # Sub stream (SD) used for motion detection
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{DVR_IP}:554/Streaming/Channels/402
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/402
           roles:
             - detect
