@@ -22,9 +22,6 @@ ffmpeg:
 detect:
   enabled: false  # Disabled to save CPU & RAM (CPU-based object detection is heavy)
 
-motion:
-  enabled: true   # Enable motion detection for recording triggers
-
 record:
   enabled: true
   retain:
