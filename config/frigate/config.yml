@@ -27,6 +27,8 @@ ffmpeg:
 # Do NOT use #transport=tcp in stream URLs — that is ffmpeg syntax and
 # go2rtc will misinterpret it as a second stream source named "tcp".
 go2rtc:
+  log:
+    level: "debug"
   rtsp:
     default_query: "transport=tcp"   # Force TCP for all DVR connections
   streams:
