@@ -2,122 +2,93 @@
 # HOME LAB SYSTEM - Frigate NVR Configuration
 # ==============================================================================
 
-# MQTT Configuration (Used for Home Assistant integration in Phase 4)
-# Connected to the Mosquitto MQTT broker in the same homelab_net network
+# MQTT: Disabled until Mosquitto (Phase 4) is deployed.
+# Re-enable by removing 'enabled: false' after running smarthome stack.
 mqtt:
-  host: hl_mosquitto
-  user: '{FRIGATE_MQTT_USER}'
-  password: '{FRIGATE_MQTT_PASSWORD}'
+  enabled: false
 
 # Define CPU detector explicitly to avoid errors regarding missing Coral TPU
 detectors:
   cpu:
     type: cpu
 
-# Enable Intel VAAPI Hardware Acceleration globally for Intel HD 4400/4600 GPU
+# FFmpeg global settings
+# NOTE: Hardware acceleration (preset-vaapi) is temporarily disabled.
+# It can cause color corruption when DVR stream quality is marginal.
+# Re-enable once streaming is confirmed stable.
 ffmpeg:
-  hwaccel_args: preset-vaapi
+  input_args: preset-rtsp-restream
 
-# go2rtc Configuration: restreaming engine to reduce DVR connection overhead
-# and enable native browser decoding (WebRTC/MSE) with correct coloring.
+# go2rtc Configuration: single connection per camera to the DVR.
+# Frigate consumes go2rtc's local RTSP relay instead of hitting the DVR directly.
+# This prevents "too many connections" errors on the DVR.
 go2rtc:
   streams:
-    # Camera 1 Streams
+    # Camera 1: Main stream (for recording) — channel 101
     camera_1:
-      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/102#transport=tcp
-    camera_1_record:
       - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/101#transport=tcp
-
-    # Camera 2 Streams
+    # Camera 2: Main stream — channel 201
     camera_2:
-      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/202#transport=tcp
-    camera_2_record:
       - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/201#transport=tcp
-
-    # Camera 3 Streams
+    # Camera 3: Main stream — channel 301
     camera_3:
-      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/302#transport=tcp
-    camera_3_record:
       - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/301#transport=tcp
-
-    # Camera 4 Streams
+    # Camera 4: Main stream — channel 401
     camera_4:
-      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/402#transport=tcp
-    camera_4_record:
       - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/401#transport=tcp
 
-# Global Defaults for Camera Streams
+# Object detection DISABLED — saves CPU/RAM on 4GB i3 system
 detect:
-  enabled: false  # Object detection DISABLED — saves CPU/RAM on 4GB i3 system
+  enabled: false
 
-# Motion detection: lightweight pixel-comparison (no AI). Publishes events
-# to MQTT at frigate/events so Home Assistant can trigger NTFY alerts.
+# Motion detection: lightweight pixel-comparison (no AI)
 motion:
-  threshold: 30         # Sensitivity: 0 (most sensitive) - 255 (least sensitive)
-  contour_area: 10      # Min pixel area change to register as motion
+  threshold: 30
+  contour_area: 10
   frame_alpha: 0.01
   frame_height: 100
 
 record:
   enabled: true
   retain:
-    days: 7       # Keep continuous 24/7 recordings for 7 days
+    days: 7
     mode: all
   events:
     retain:
-      default: 30 # Keep motion-triggered event clips for 30 days
+      default: 30
       mode: motion
 
-# Camera Definitions (consuming local go2rtc streams)
+# Camera Definitions: all cameras consume their go2rtc local stream.
+# Single input with both 'record' and 'detect' roles — one connection each.
 cameras:
-  # ----------------------------------------------------------------------------
-  # Camera 1 (DVR Channel 1)
-  # ----------------------------------------------------------------------------
   camera_1:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/camera_1_record
-          roles:
-            - record
         - path: rtsp://127.0.0.1:8554/camera_1
           roles:
+            - record
             - detect
 
-  # ----------------------------------------------------------------------------
-  # Camera 2 (DVR Channel 2)
-  # ----------------------------------------------------------------------------
   camera_2:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/camera_2_record
-          roles:
-            - record
         - path: rtsp://127.0.0.1:8554/camera_2
           roles:
+            - record
             - detect
 
-  # ----------------------------------------------------------------------------
-  # Camera 3 (DVR Channel 3)
-  # ----------------------------------------------------------------------------
   camera_3:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/camera_3_record
-          roles:
-            - record
         - path: rtsp://127.0.0.1:8554/camera_3
           roles:
+            - record
             - detect
 
-  # ----------------------------------------------------------------------------
-  # Camera 4 (DVR Channel 4)
-  # ----------------------------------------------------------------------------
   camera_4:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/camera_4_record
-          roles:
-            - record
         - path: rtsp://127.0.0.1:8554/camera_4
           roles:
+            - record
             - detect
