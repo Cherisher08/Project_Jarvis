@@ -22,20 +22,22 @@ ffmpeg:
 # go2rtc Configuration: single connection per camera to the DVR.
 # Frigate consumes go2rtc's local RTSP relay instead of hitting the DVR directly.
 # This prevents "too many connections" errors on the DVR.
+#
+# TCP transport is forced via rtsp.default_query (go2rtc native config).
+# Do NOT use #transport=tcp in stream URLs — that is ffmpeg syntax and
+# go2rtc will misinterpret it as a second stream source named "tcp".
 go2rtc:
+  rtsp:
+    default_query: "transport=tcp"   # Force TCP for all DVR connections
   streams:
-    # Camera 1: Main stream (for recording) — channel 101
     camera_1:
-      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/101#transport=tcp
-    # Camera 2: Main stream — channel 201
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/101
     camera_2:
-      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/201#transport=tcp
-    # Camera 3: Main stream — channel 301
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/201
     camera_3:
-      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/301#transport=tcp
-    # Camera 4: Main stream — channel 401
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/301
     camera_4:
-      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/401#transport=tcp
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/401
 
 # Object detection DISABLED — saves CPU/RAM on 4GB i3 system
 detect:
