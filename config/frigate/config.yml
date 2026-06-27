@@ -68,7 +68,7 @@ cameras:
   camera_1:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/camera_1
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/101
           roles:
             - record
             - detect
