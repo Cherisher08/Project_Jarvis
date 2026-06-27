@@ -1,0 +1,44 @@
+# ==============================================================================
+# HOME ASSISTANT - configuration.yaml (Starter Template)
+# ==============================================================================
+# File location: /opt/homelab/homeassistant/configuration.yaml
+#
+# Home Assistant generates this file on first run. This template pre-wires
+# the NTFY REST command and loads automations from the automations.yaml file.
+#
+# After deploying Home Assistant for the first time:
+#   1. Visit http://homeassistant.home (or http://192.168.1.11:8123)
+#   2. Complete the onboarding wizard (create your admin account)
+#   3. Go to Settings → Integrations → MQTT → Configure with:
+#      Host: hl_mosquitto, Port: 1883, Username/Password from your .env
+#   4. Go to Settings → Integrations → Add Integration → Frigate
+#      (Enter Frigate URL: http://hl_frigate:5000)
+# ==============================================================================
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+# Load automation file
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# -----------------------------------------------------------------------
+# REST Commands — used by automations to call external services
+# -----------------------------------------------------------------------
+rest_command:
+  # NTFY Push Notification
+  # Sends alerts to the "home-alerts" topic on your self-hosted NTFY server
+  ntfy_alert:
+    url: "http://hl_ntfy:80/home-alerts"
+    method: POST
+    headers:
+      Title: "{{ title }}"
+      Tags: "{{ tags }}"
+      Priority: "{{ priority }}"
+    payload: "{{ message }}"
+    content_type: "text/plain"

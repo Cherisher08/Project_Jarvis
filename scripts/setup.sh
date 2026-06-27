@@ -131,6 +131,11 @@ mkdir -p /opt/homelab/config/ntfy
 # Phase 3 — Camera service config dirs
 mkdir -p /opt/homelab/config/frigate
 
+# Phase 4 — Smart Home service config dirs
+mkdir -p /opt/homelab/config/mosquitto/data
+mkdir -p /opt/homelab/config/mosquitto/log
+mkdir -p /opt/homelab/homeassistant
+
 
 # Permissions
 USER_UID=$(id -u "$ACTUAL_USER")

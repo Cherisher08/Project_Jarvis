@@ -18,9 +18,45 @@ detectors:
 ffmpeg:
   hwaccel_args: preset-vaapi
 
+# go2rtc Configuration: restreaming engine to reduce DVR connection overhead
+# and enable native browser decoding (WebRTC/MSE) with correct coloring.
+go2rtc:
+  streams:
+    # Camera 1 Streams
+    camera_1:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/102#transport=tcp
+    camera_1_record:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/101#transport=tcp
+
+    # Camera 2 Streams
+    camera_2:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/202#transport=tcp
+    camera_2_record:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/201#transport=tcp
+
+    # Camera 3 Streams
+    camera_3:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/302#transport=tcp
+    camera_3_record:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/301#transport=tcp
+
+    # Camera 4 Streams
+    camera_4:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/402#transport=tcp
+    camera_4_record:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/401#transport=tcp
+
 # Global Defaults for Camera Streams
 detect:
-  enabled: false  # Disabled to save CPU & RAM (CPU-based object detection is heavy)
+  enabled: false  # Object detection DISABLED — saves CPU/RAM on 4GB i3 system
+
+# Motion detection: lightweight pixel-comparison (no AI). Publishes events
+# to MQTT at frigate/events so Home Assistant can trigger NTFY alerts.
+motion:
+  threshold: 30         # Sensitivity: 0 (most sensitive) - 255 (least sensitive)
+  contour_area: 10      # Min pixel area change to register as motion
+  frame_alpha: 0.01
+  frame_height: 100
 
 record:
   enabled: true
@@ -32,7 +68,7 @@ record:
       default: 30 # Keep motion-triggered event clips for 30 days
       mode: motion
 
-# Camera Definitions (Analog cameras via single DVR at 192.168.1.2)
+# Camera Definitions (consuming local go2rtc streams)
 cameras:
   # ----------------------------------------------------------------------------
   # Camera 1 (DVR Channel 1)
@@ -40,12 +76,10 @@ cameras:
   camera_1:
     ffmpeg:
       inputs:
-        # Main stream (HD) used for recording
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/101
+        - path: rtsp://127.0.0.1:8554/camera_1_record
           roles:
             - record
-        # Sub stream (SD) used for motion detection
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/102
+        - path: rtsp://127.0.0.1:8554/camera_1
           roles:
             - detect
 
@@ -55,12 +89,10 @@ cameras:
   camera_2:
     ffmpeg:
       inputs:
-        # Main stream (HD) used for recording
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/201
+        - path: rtsp://127.0.0.1:8554/camera_2_record
           roles:
             - record
-        # Sub stream (SD) used for motion detection
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/202
+        - path: rtsp://127.0.0.1:8554/camera_2
           roles:
             - detect
 
@@ -70,12 +102,10 @@ cameras:
   camera_3:
     ffmpeg:
       inputs:
-        # Main stream (HD) used for recording
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/301
+        - path: rtsp://127.0.0.1:8554/camera_3_record
           roles:
             - record
-        # Sub stream (SD) used for motion detection
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/302
+        - path: rtsp://127.0.0.1:8554/camera_3
           roles:
             - detect
 
@@ -85,11 +115,9 @@ cameras:
   camera_4:
     ffmpeg:
       inputs:
-        # Main stream (HD) used for recording
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/401
+        - path: rtsp://127.0.0.1:8554/camera_4_record
           roles:
             - record
-        # Sub stream (SD) used for motion detection
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_DVR_IP}:554/Streaming/Channels/402
+        - path: rtsp://127.0.0.1:8554/camera_4
           roles:
             - detect
