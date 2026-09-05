@@ -1,0 +1,36 @@
+services:
+  # ----------------------------------------------------------------------------
+  # Jellyfin: Open-Source Media Streaming Server (Movies, TV Shows, Music)
+  # ----------------------------------------------------------------------------
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: hl_jellyfin
+    restart: unless-stopped
+    ports:
+      - "${JELLYFIN_PORT:-8096}:8096/tcp"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+    volumes:
+      - ${DATA_ROOT:-/opt/homelab/data}/jellyfin/config:/config
+      - ${DATA_ROOT:-/opt/homelab/data}/jellyfin/cache:/cache
+      - ${MEDIA_ROOT:-/opt/homelab/media}/videos:/media/videos:ro
+      - ${MEDIA_ROOT:-/opt/homelab/media}/music:/media/music:ro
+    # If your laptop has Intel/AMD integrated graphics, uncomment the devices section below:
+    # devices:
+    #   - /dev/dri:/dev/dri
+    networks:
+      - homelab_net
+    deploy:
+      resources:
+        limits:
+          memory: 750M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  homelab_net:
+    name: homelab_net
+    external: true

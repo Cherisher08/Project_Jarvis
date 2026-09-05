@@ -1,0 +1,18 @@
+---
+# ==============================================================================
+# Homepage Widgets Configuration
+# Live system resource utilization & environment metrics
+# ==============================================================================
+
+- resources:
+    cpu: true
+    memory: true
+    disk: /app/config
+    expanded: true
+
+- datetime:
+    text_size: xl
+    format:
+      timeStyle: short
+      dateStyle: medium
+      hour12: true

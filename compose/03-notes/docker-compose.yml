@@ -1,0 +1,29 @@
+services:
+  # ----------------------------------------------------------------------------
+  # Memos: Open-Source, Self-Hosted Alternative to Google Keep
+  # Features: Note cards, checklists, tagging, markdown, PWA & Moe Memos mobile app
+  # ----------------------------------------------------------------------------
+  memos:
+    image: neosmemo/memos:stable
+    container_name: hl_memos
+    restart: unless-stopped
+    ports:
+      - "${MEMOS_PORT:-5230}:5230/tcp"
+    volumes:
+      - ${DATA_ROOT:-/opt/homelab/data}/memos:/var/opt/memos
+    networks:
+      - homelab_net
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  homelab_net:
+    name: homelab_net
+    external: true

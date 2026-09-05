@@ -1,0 +1,24 @@
+---
+# ==============================================================================
+# Homepage Bookmarks & Quick Documentation Access
+# ==============================================================================
+
+- "Homelab Documentation":
+    - "System Architecture Guide":
+        - abbr: "ARC"
+        - href: "https://github.com"
+        - description: "Port Matrix, 4GB Memory Budget & Storage layout"
+    - "Adding New Containers SOP":
+        - abbr: "SOP"
+        - href: "https://github.com"
+        - description: "3-Step Guide to add any new service"
+
+- "Remote Access & Host Management":
+    - "Tailscale Admin Console":
+        - icon: tailscale.png
+        - href: "https://login.tailscale.com/admin/machines"
+        - description: "Manage connected family devices & Tailnet IPs"
+    - "Ubuntu Server Cockpit":
+        - icon: cockpit.png
+        - href: "http://192.168.1.50:9090"
+        - description: "Web terminal, OS updates, and host storage stats"

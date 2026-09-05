@@ -1,0 +1,12 @@
+# ==============================================================================
+# Pi-hole Custom Local DNS Records
+# Format: <IP_ADDRESS> <HOSTNAME>
+# ==============================================================================
+# Replace 192.168.1.50 with your actual SERVER_IP (LAN or Tailscale IP)
+192.168.1.50 dashboard.home.lab
+192.168.1.50 notes.home.lab
+192.168.1.50 books.home.lab
+192.168.1.50 media.home.lab
+192.168.1.50 photos.home.lab
+192.168.1.50 dns.home.lab
+192.168.1.50 proxy.home.lab
