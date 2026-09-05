@@ -1,0 +1,33 @@
+services:
+  # ----------------------------------------------------------------------------
+  # Homepage: High-Performance, Low-Resource Homelab Dashboard & Documentation Portal
+  # ----------------------------------------------------------------------------
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: hl_homepage
+    restart: unless-stopped
+    ports:
+      - "3000:3000/tcp"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+    volumes:
+      - ${CONFIG_ROOT:-/opt/homelab/config}/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - homelab_net
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  homelab_net:
+    name: homelab_net
+    external: true

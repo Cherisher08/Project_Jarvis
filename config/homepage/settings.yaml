@@ -1,0 +1,23 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/settings/
+
+title: "HomeLab Central"
+background:
+  opacity: 90
+  blur: "sm"
+theme: dark
+color: slate
+
+headerStyle: clean
+
+layout:
+  "Personal Productivity":
+    style: row
+    columns: 2
+  "Media & Memories":
+    style: row
+    columns: 2
+  "Network & Administration":
+    style: row
+    columns: 2

@@ -1,0 +1,32 @@
+services:
+  # ----------------------------------------------------------------------------
+  # Kavita: High-Performance Digital Ebook & Comic Library
+  # Features: EPUB, PDF, CBR/CBZ, per-user reading progress, OPDS integration
+  # ----------------------------------------------------------------------------
+  kavita:
+    image: jvmilazz0/kavita:latest
+    container_name: hl_kavita
+    restart: unless-stopped
+    ports:
+      - "${KAVITA_PORT:-5000}:5000/tcp"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+    volumes:
+      - ${DATA_ROOT:-/opt/homelab/data}/kavita:/kavita/config
+      - ${MEDIA_ROOT:-/opt/homelab/media}/books:/books:ro
+    networks:
+      - homelab_net
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  homelab_net:
+    name: homelab_net
+    external: true

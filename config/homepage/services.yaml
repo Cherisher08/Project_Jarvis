@@ -1,0 +1,47 @@
+---
+# ==============================================================================
+# Homepage Services Configuration
+# Maps to running docker containers with live health checks
+# ==============================================================================
+
+- "Personal Productivity":
+    - "Memos":
+        icon: memos.png
+        href: "http://notes.home.lab"
+        description: "Google Keep alternative - Fast notes, tags & checklists"
+        ping: "http://hl_memos:5230"
+        container: hl_memos
+    - "Kavita":
+        icon: kavita.png
+        href: "http://books.home.lab"
+        description: "Ebook, PDF & Digital Comic Library with OPDS"
+        ping: "http://hl_kavita:5000"
+        container: hl_kavita
+
+- "Media & Memories":
+    - "Immich":
+        icon: immich.png
+        href: "http://photos.home.lab"
+        description: "High-performance Mobile Photo & Video Auto-Backup"
+        ping: "http://hl_immich_server:2283/api/server-info/ping"
+        container: hl_immich_server
+    - "Jellyfin":
+        icon: jellyfin.png
+        href: "http://media.home.lab"
+        description: "Family Media Streaming (Movies, Shows, Music)"
+        ping: "http://hl_jellyfin:8096/health"
+        container: hl_jellyfin
+
+- "Network & Administration":
+    - "Pi-hole":
+        icon: pi-hole.png
+        href: "http://dns.home.lab/admin"
+        description: "Network DNS Ad-Blocking & Local Domain Names"
+        ping: "http://hl_pihole:80"
+        container: hl_pihole
+    - "Nginx Proxy Manager":
+        icon: nginx-proxy-manager.png
+        href: "http://proxy.home.lab"
+        description: "Reverse Proxy, Subdomain Routing & SSL Certificates"
+        ping: "http://hl_nginx_proxy_manager:81"
+        container: hl_nginx_proxy_manager

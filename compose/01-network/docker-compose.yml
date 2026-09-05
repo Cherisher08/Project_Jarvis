@@ -1,0 +1,68 @@
+services:
+  # ----------------------------------------------------------------------------
+  # Pi-hole: Network-wide DNS Ad-blocking & Local DNS Resolution
+  # ----------------------------------------------------------------------------
+  pihole:
+    image: pihole/pihole:latest
+    container_name: hl_pihole
+    hostname: pihole
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8080:80/tcp" # Web admin UI accessible at http://<SERVER_IP>:8080/admin
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      WEBPASSWORD: ${PIHOLE_PASSWORD:-Admin12345}
+      FTLCONF_LOCAL_IPV4: ${SERVER_IP:-127.0.0.1}
+      DNS1: 1.1.1.1
+      DNS2: 1.0.0.1
+    volumes:
+      - ${DATA_ROOT:-/opt/homelab/data}/pihole:/etc/pihole
+      - ${DATA_ROOT:-/opt/homelab/data}/dnsmasq.d:/etc/dnsmasq.d
+      - ${CONFIG_ROOT:-/opt/homelab/config}/pihole/custom.list:/etc/pihole/custom.list
+    networks:
+      - homelab_net
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ----------------------------------------------------------------------------
+  # Nginx Proxy Manager: Subdomain Routing & SSL Management
+  # ----------------------------------------------------------------------------
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: hl_nginx_proxy_manager
+    restart: unless-stopped
+    ports:
+      - "80:80/tcp"   # HTTP traffic
+      - "443:443/tcp" # HTTPS traffic
+      - "81:81/tcp"   # Web admin UI accessible at http://<SERVER_IP>:81
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      DISABLE_IPV6: "true"
+    volumes:
+      - ${DATA_ROOT:-/opt/homelab/data}/npm/data:/data
+      - ${DATA_ROOT:-/opt/homelab/data}/npm/letsencrypt:/etc/letsencrypt
+    networks:
+      - homelab_net
+    deploy:
+      resources:
+        limits:
+          memory: 250M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  homelab_net:
+    name: homelab_net
+    driver: bridge
