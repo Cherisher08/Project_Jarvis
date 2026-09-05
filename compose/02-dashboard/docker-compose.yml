@@ -12,6 +12,7 @@ services:
       TZ: ${TZ:-Etc/UTC}
       PUID: ${PUID:-1000}
       PGID: ${PGID:-1000}
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_ALLOWED_HOSTS:-*}
     volumes:
       - ${CONFIG_ROOT:-/opt/homelab/config}/homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
